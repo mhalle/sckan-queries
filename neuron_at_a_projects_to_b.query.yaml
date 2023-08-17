@@ -1,0 +1,50 @@
+title: Neurons at A projects to B
+description: |
+  The most basic query we want to have for SCKAN is to list 
+  the neuron populations along with their origins and destinations.
+
+  Return the neuron populations where Neuron at A projects to B. 
+  In this case, A refers to the soma location of the neuron population  
+  and B refers to the axon terminal or the axon sensory terminal location 
+  of the neuron population.
+
+queryReturnFields:
+  - name: Neuron_ID
+  - name: Neuron_Label
+  - name: A
+  - name: Region_A
+  - name: B
+  - name: Region_B
+
+query: |
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX UBERON: <http://purl.obolibrary.org/obo/UBERON_>
+  PREFIX partOf: <http://purl.obolibrary.org/obo/BFO_0000050>
+  PREFIX ilxtr: <http://uri.interlex.org/tgbugs/uris/readable/>
+
+  SELECT  ?Neuron_ID ?Neuron_Label ?A ?Region_A ?B ?Region_B
+  {
+    
+    ## ***************************** INSTRUCTIONS **************************************** 
+    ## UNCOMMENT the lines by removing the hash symbol (#) before FILTER. 
+    ## REPLACE the region name on the right side of the equality operator (=) 
+    ## by your desired region name within quotes (all in lower case).
+    ## ***********************************************************************************
+
+    # FILTER ( LCase(?Region_A) = 'inferior vagus x ganglion' )
+    # FILTER ( LCase(?Region_B) = 'epicardium' )
+
+    # FILTER REGEX ( LCase(?Region_A), 'vagus x' ) # For partial matching of Region_A labels  
+    # FILTER REGEX ( LCase(?Region_B), 'epicard' ) # For partial matching of Region_B labels  
+    
+    # FILTER REGEX (?Neuron_Label, 'aacar') # For partial matching of neuron labels
+
+    ?Neuron_ID rdfs:label ?Neuron_Label;
+                ilxtr:hasSomaLocation ?A;
+                (ilxtr:hasAxonTerminalLocation | ilxtr:hasAxonSensoryLocation) ?B.
+  
+    ?A rdfs:label ?Region_A. ?B rdfs:label ?Region_B.
+  }
+  ORDER BY ?Neuron_ID ?Region_A ?Region_B
