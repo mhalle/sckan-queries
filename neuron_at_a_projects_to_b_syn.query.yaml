@@ -13,10 +13,10 @@ description: |
 queryReturnFields:
   - name: Neuron_ID
   - name: Neuron_Label
-  - name: A
-  - name: Region_A
-  - name: B
-  - name: Region_B
+  - name: Region_A_ID
+  - name: Region_A_Label
+  - name: Region_B_ID
+  - name: Region_B_Label
 
 query: |
   # Query: return the neuron populations where Neuron at A projects to B with synonyms for A and B. 
@@ -30,7 +30,7 @@ query: |
   PREFIX ilxtr: <http://uri.interlex.org/tgbugs/uris/readable/>
   PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
 
-  SELECT  ?Neuron_ID ?Neuron_Label ?A ?Region_A ?B ?Region_B
+  SELECT  ?Neuron_ID ?Neuron_Label ?Region_A_ID ?Region_A_Label ?Region_B_ID ?Region_B_Label
   {
     
     ## ***************************** INSTRUCTIONS **************************************** 
@@ -39,19 +39,19 @@ query: |
     ## by your desired region name within quotes (all in lower case).
     ## ***********************************************************************************
 
-    # FILTER ( LCase(?Region_A) = 'nodose ganglion' )
-    # FILTER ( LCase(?Region_B) = 'epicardium' )
+    # FILTER ( LCase(?Region_A_Label) = 'nodose ganglion' )
+    # FILTER ( LCase(?Region_B_Label) = 'epicardium' )
 
-    # FILTER REGEX ( LCase(?Region_A), 'nodose' )  # For partial matching of Region_A labels  
-    # FILTER REGEX ( LCase(?Region_B), 'epicard' ) # For partial matching of Region_B labels  
+    # FILTER REGEX ( LCase(?Region_A_Label), 'nodose' )  # For partial matching of Region_A labels  
+    # FILTER REGEX ( LCase(?Region_B_Label), 'epicard' ) # For partial matching of Region_B labels  
     
     # FILTER REGEX (?Neuron_Label, 'aacar') # For partial matching of neuron labels
 
     ?Neuron_ID rdfs:label ?Neuron_Label;
-                ilxtr:hasSomaLocation ?A;
-                (ilxtr:hasAxonTerminalLocation | ilxtr:hasAxonSensoryLocation) ?B.
+                ilxtr:hasSomaLocation ?Region_A_ID;
+                (ilxtr:hasAxonTerminalLocation | ilxtr:hasAxonSensoryLocation) ?Region_B_Label.
   
-    ?A (rdfs:label | oboInOwl:hasExactSynonym) ?Region_A. 
-    ?B (rdfs:label | oboInOwl:hasExactSynonym) ?Region_B.       
+    ?Region_A_ID (rdfs:label | oboInOwl:hasExactSynonym) ?Region_A_Label. 
+    ?Region_B_ID (rdfs:label | oboInOwl:hasExactSynonym) ?Region_B_Label.       
   }
-  ORDER BY ?Neuron_ID ?Region_A ?Region_B
+  ORDER BY ?Neuron_ID ?Region_A_Label ?Region_B_Label
